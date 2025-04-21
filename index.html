@@ -6,150 +6,278 @@
     <title>EduTrack Portfolio</title>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; text-align: center; background: #f9f9f9; color: #333; }
-        header { background: #ffff0085; color: white; padding: 15px; font-size: 24px; }
-        nav ul { list-style: none; padding: 0; display: flex; justify-content: center; }
-        nav ul li { margin: 10px; }
-        nav ul li a { color: white; text-decoration: none; font-weight: bold; }
-        .dashboard-container { display: flex; }
-        .sidebar { width: 20%; padding: 20px; background: #eeeeee; }
-        .chart-container { width: 80%; padding: 20px; }
-        .card { background: white; padding: 20px; margin: 10px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
-        button { padding: 10px; margin: 5px; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 5px; font-weight: bold; }
-        .semester-selector { margin-bottom: 20px; }
-        .comparison-chart { margin-top: 40px; }
-        h1{
-            color: rgb(46, 2, 104);
-        }
-        h2{
-            color: rgb(46, 2, 104);
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #8b5cf6;
+            --success: #22c55e;
+            --info: #0ea5e9;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
         }
 
-        /* General header styling */
-header {
-  background-color: #222;
-  padding: 15px;
-  text-align: center;
-}
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            text-align: center; 
+            background: var(--background);
+            color: var(--text);
+        }
+        
+        header { 
+            background: linear-gradient(135deg, #2d1950 0%, #492973 100%);
+            padding: 20px; 
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-header h1 {
-  color: #fff;
-  font-size: 28px;
-  margin-bottom: 10px;
-}
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+            pointer-events: none;
+        }
+        
+        nav ul { 
+            list-style: none; 
+            padding: 0; 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            position: relative;
+            z-index: 1;
+        }
+        
+        nav ul li { 
+            margin: 10px; 
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .chart-wrapper {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease;
+            height: 400px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        
+        .chart-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .pie-chart-wrapper {
+            position: relative;
+            transition: transform 0.3s ease;
+            height: 400px;
+        }
+        
+        .pie-chart-wrapper:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        
+        .card { 
+            background: var(--card);
+            padding: 30px; 
+            margin: 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        
+        .nav-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.9), rgba(139, 92, 246, 0.9));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
 
+        .nav-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .semester-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .semester-btn {
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .semester-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+        
+        .semester-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        
+        h1 { 
+            font-size: 42px; 
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #fff 0%, #f3f4f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2 { 
+            font-size: 28px; 
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        p { 
+            font-size: 16px; 
+            line-height: 1.6; 
+            color: var(--text);
+        }
+        
+        #about p, #projects p { 
+            font-size: 18px; 
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
 
-/* Remove default list styles */
-nav ul {
-  list-style: none;
-  padding: 0;
-}
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
 
-nav ul li {
-  display: inline;
-  margin: 5px;
-}
-
-/* Styling the navigation buttons */
-.nav-btn {
-  display: inline-block;
-  background-color: #007bff; /* Blue color */
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-size: 22px;
-  font-weight: bold;
-  transition: background 0.3s ease-in-out;
-}
-
-.nav-btn:hover {
-  background-color: #0056b3; /* Darker blue on hover */
-}
-#about p {
-    text-align: center;
-    font-size: 24px; /* Increase font size */
-  line-height: 1.6;
-  }
-  #about h2{
-    text-align: center;
-    font-size: 32px; /* Increase font size */
-  line-height: 1.6;
-  }
-  #projects p {
-  font-size: 24px; /* Increase text size */
-  font-weight: 500; /* Slightly bold for better visibility */
-  line-height: 1.6; /* Improve readability */
-}
-#projects h2{
-    text-align: center;
-    font-size: 32px; /* Increase font size */
-  line-height: 1.6;
-}
-#dashboard h2{
-    text-align: center;
-    font-size: 32px; /* Increase font size */
-  line-height: 1.6;
-  }
-header h1 {
-  font-size: 48px; /* Increase header text size */
-  font-weight: bold;
-}
-
-#contact h2{
-    text-align: center;
-    font-size: 32px; /* Increase font size */
-  line-height: 1.6;
-}
-.semester-btn {
-  font-size: 18px; /* Increase button text size */
-  font-weight: bold;
-  padding: 12px 20px; /* Increase padding for bigger buttons */
-  margin: 8px;
-  background-color: #007BFF; /* Blue background */
-  color: white; /* White text */
-  border: none;
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.semester-btn:hover {
-  background-color: #0056b3; /* Darker color on hover */
-}
-       
+        a:hover {
+            color: var(--accent);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            
+            .card {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+            
+            .nav-btn {
+                font-size: 16px;
+                padding: 8px 16px;
+            }
+            
+            .semester-btn {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+            
+            .chart-wrapper {
+                padding: 10px;
+                height: 300px;
+            }
+            
+            .pie-chart-wrapper {
+                height: 300px;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>SUPRIYA KUMARI</h1>
         <nav>
-          <ul>
-            <li><a href="#about" class="nav-btn">About</a></li>
-            <li><a href="#projects" class="nav-btn">Projects</a></li>
-            <li><a href="#dashboard" class="nav-btn">Dashboard</a></li>
-            <li><a href="#contact" class="nav-btn">Contact</a></li>
-          </ul>
+            <ul>
+                <li><a href="#about" class="nav-btn">About</a></li>
+                <li><a href="#projects" class="nav-btn">Projects</a></li>
+                <li><a href="#dashboard" class="nav-btn">Dashboard</a></li>
+                <li><a href="#contact" class="nav-btn">Contact</a></li>
+            </ul>
         </nav>
-      </header>
-      
-    
+    </header>
+
     <section id="about" class="card">
         <h2>About Me</h2>
         <p>I am a final-year Computer Science Engineering student with a strong foundation in web development, specializing in HTML, CSS, JavaScript, and React. Passionate about building user-friendly, scalable applications, I have experience working on front-end development, responsive design, and modern frameworks. I am eager to leverage my technical skills and problem-solving abilities to contribute to innovative projects and dynamic teams.</p>
     </section>
-    
+
     <section id="projects" class="card">
         <h2>Projects</h2>
-        <p>E-Commerce Web App.</p>
+        <p>E-Commerce Web App</p>
         <p>GitHub: <a href="https://github.com/supriyakumari20122002/Ecommerce-app.git" target="_blank">Ecommerce App Repository</a></p>
-      </section>
-      
-    
+    </section>
+
     <section id="dashboard" class="card">
         <h2>Dashboard</h2>
         <div class="semester-selector">
-            <h3>Select Semester</h3>
             <button class="semester-btn" data-semester="1">Semester 1</button>
             <button class="semester-btn" data-semester="2">Semester 2</button>
             <button class="semester-btn" data-semester="3">Semester 3</button>
@@ -158,34 +286,34 @@ header h1 {
             <button class="semester-btn" data-semester="6">Semester 6</button>
             <button class="semester-btn" data-semester="7">Semester 7</button>
         </div>
-        
+
         <div class="dashboard-container">
-            <div class="chart-container">
+            <div class="chart-wrapper">
                 <canvas id="marksChart"></canvas>
-                <canvas id="sgpaChart" style="margin-top: 20px;"></canvas>
+            </div>
+            <div class="chart-wrapper pie-chart-wrapper">
+                <canvas id="sgpaPieChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="skillsRadarChart"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="attendancePolarChart"></canvas>
+            </div>
+            <div class="chart-wrapper" style="grid-column: span 2;">
+                <canvas id="sgpaChart"></canvas>
             </div>
         </div>
-        
-        <div class="comparison-chart">
-            <h3>Subject Performance Over Semesters</h3>
-            <canvas id="subjectComparisonChart"></canvas>
-        </div>
     </section>
-    
+
     <section id="contact" class="card">
         <h2>Contact</h2>
         <p>Email: <a href="mailto:supriya20122002@gmail.com">supriya20122002@gmail.com</a></p>
         <p>LinkedIn: <a href="https://www.linkedin.com/in/supriya-kumari-5b5a9a287/" target="_blank">Supriya Kumari's LinkedIn</a></p>
-      </section>
-      
-    
+    </section>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const semesterButtons = document.querySelectorAll(".semester-btn");
-            const ctx = document.getElementById("marksChart").getContext("2d");
-            const sgpaCtx = document.getElementById("sgpaChart").getContext("2d");
-            const comparisonCtx = document.getElementById("subjectComparisonChart").getContext("2d");
-
             const semesterData = {
                 1: { 
                     labels: ["Fundamentals of Computer Programming", "Workshop Technology", "Digital Electronics", "Disruptive Technologies", "Mathematics-1", "Biology for Engineers", "Communication Skills", "Design Thinking"],
@@ -224,144 +352,201 @@ header h1 {
                 }
             };
 
-            const sgpaData = { 
-                labels: ["Semester 1", "Semester 2", "Semester 3", "Semester 4", "Semester 5", "Semester 6", "Semester 7"], 
-                sgpa: [6.5, 7.2, 7.8, 8.1, 8.4, 8.7, 9.0] 
+            const sgpaData = {
+                labels: ["Semester 1", "Semester 2", "Semester 3", "Semester 4", "Semester 5", "Semester 6", "Semester 7"],
+                sgpa: [6.5, 7.2, 7.8, 8.1, 8.4, 8.7, 9.0]
             };
 
-            // Common subjects across semesters for comparison
-            const commonSubjects = {
-                "Programming": {
-                    1: 49.86, // Fundamentals of Computer Programming
-                    2: 79.27, // OOP using C++
-                    3: 65.32, // OOP using Java
-                    4: 95.16, // Python Lab
-                    5: 83.48, // Advanced Programming Lab-1
-                    6: 89.54  // Advanced Programming Lab-2
-                },
-                "Mathematics": {
-                    1: 67.72, // Mathematics-1
-                    2: 86.84, // Mathematics-2
-                    3: 57.69, // Discrete Mathematics
-                    4: 43.22, // Probability & Statistics
-                    5: null,
-                    6: null
-                },
-                "Core CS": {
-                    1: null,
-                    2: null,
-                    3: 95.00, // Data Structures
-                    4: 82.59, // Computer Networks
-                    5: 85.16, // DAA with Lab
-                    6: 97.08  // Theory of Computation
-                }
+            const chartColors = {
+                primary: '#6366f1',
+                secondary: '#ec4899',
+                accent: '#8b5cf6',
+                success: '#22c55e',
+                info: '#0ea5e9',
+                warning: '#f59e0b',
+                danger: '#ef4444'
             };
 
-            let marksChart = new Chart(ctx, {
+            const marksChart = new Chart(document.getElementById("marksChart").getContext("2d"), {
                 type: 'bar',
-                data: { labels: [], datasets: [] },
-                options: { 
-                    responsive: true, 
+                data: {
+                    labels: semesterData[7].labels,
+                    datasets: [{
+                        label: 'Semester 7 Marks',
+                        data: semesterData[7].marks,
+                        backgroundColor: [
+                            chartColors.primary,
+                            chartColors.secondary,
+                            chartColors.accent
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     scales: { y: { beginAtZero: true, max: 100 } },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Subject-wise Marks'
+                        title: { display: true, text: 'Subject-wise Marks' }
+                    }
+                }
+            });
+
+            const sgpaPieChart = new Chart(document.getElementById("sgpaPieChart").getContext("2d"), {
+                type: 'pie',
+                data: {
+                    labels: sgpaData.labels,
+                    datasets: [{
+                        data: sgpaData.sgpa,
+                        backgroundColor: [
+                            chartColors.primary,
+                            chartColors.secondary,
+                            chartColors.accent,
+                            chartColors.success,
+                            chartColors.info,
+                            chartColors.warning,
+                            chartColors.danger
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'SGPA Distribution' },
+                        legend: { position: 'right' }
+                    },
+                    onHover: (event, elements) => {
+                        const chart = sgpaPieChart;
+                        if (elements.length) {
+                            const hoveredElement = elements[0];
+                            event.native.target.style.cursor = 'pointer';
+                            
+                            chart.data.datasets[0]._meta = {};
+                            
+                            const dataset = chart.data.datasets[hoveredElement.datasetIndex];
+                            if (!dataset.offset) {
+                                dataset.offset = Array(dataset.data.length).fill(0);
+                            }
+                            
+                            dataset.offset = dataset.offset.map((offset, index) => 
+                                index === hoveredElement.index ? 20 : 0
+                            );
+                            
+                            chart.update();
+                        } else {
+                            chart.data.datasets.forEach(dataset => {
+                                if (dataset.offset) {
+                                    dataset.offset = dataset.offset.map(() => 0);
+                                }
+                            });
+                            chart.update();
                         }
                     }
                 }
             });
 
-            let sgpaChart = new Chart(sgpaCtx, {
+            const sgpaChart = new Chart(document.getElementById("sgpaChart").getContext("2d"), {
                 type: 'line',
                 data: {
                     labels: sgpaData.labels,
-                    datasets: [{ 
-                        label: 'SGPA', 
-                        data: sgpaData.sgpa, 
-                        borderColor: '#007bff',
-                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    datasets: [{
+                        label: 'SGPA Trend',
+                        data: sgpaData.sgpa,
+                        borderColor: chartColors.primary,
+                        backgroundColor: `${chartColors.primary}33`,
                         fill: true,
                         tension: 0.3
                     }]
                 },
-                options: { 
-                    responsive: true, 
-                    scales: { y: { beginAtZero: false, min: 6, max: 10 } },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 6, max: 10 } },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'SGPA Trend Over Semesters'
-                        }
+                        title: { display: true, text: 'SGPA Progression' }
                     }
                 }
             });
 
-            let comparisonChart = new Chart(comparisonCtx, {
-                type: 'line',
+            new Chart(document.getElementById("skillsRadarChart").getContext("2d"), {
+                type: 'radar',
                 data: {
-                    labels: sgpaData.labels.slice(0, 6), // Only up to semester 6 for common subjects
-                    datasets: [
-                        {
-                            label: 'Programming Subjects',
-                            data: Object.values(commonSubjects["Programming"]),
-                            borderColor: '#FF6384',
-                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
-                            fill: true
-                        },
-                        {
-                            label: 'Mathematics Subjects',
-                            data: Object.values(commonSubjects["Mathematics"]),
-                            borderColor: '#36A2EB',
-                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
-                            fill: true
-                        },
-                        {
-                            label: 'Core CS Subjects',
-                            data: Object.values(commonSubjects["Core CS"]),
-                            borderColor: '#FFCE56',
-                            backgroundColor: 'rgba(255, 206, 86, 0.1)',
-                            fill: true
-                        }
-                    ]
+                    labels: ['Programming', 'Problem Solving', 'Web Development', 'Database', 'AI/ML', 'Cloud Computing'],
+                    datasets: [{
+                        label: 'Skills Proficiency',
+                        data: [90, 85, 88, 82, 75, 80],
+                        backgroundColor: `${chartColors.accent}33`,
+                        borderColor: chartColors.accent,
+                        pointBackgroundColor: chartColors.accent,
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: chartColors.accent
+                    }]
                 },
                 options: {
                     responsive: true,
-                    scales: { y: { beginAtZero: false, min: 30, max: 100 } },
+                    maintainAspectRatio: false,
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Subject Category Performance Over Semesters'
+                        title: { display: true, text: 'Skills Distribution' }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100
                         }
                     }
                 }
             });
 
-            semesterButtons.forEach(button => {
+            new Chart(document.getElementById("attendancePolarChart").getContext("2d"), {
+                type: 'polarArea',
+                data: {
+                    labels: ['Theory Classes', 'Lab Sessions', 'Workshops', 'Seminars', 'Project Work'],
+                    datasets: [{
+                        data: [95, 98, 85, 90, 92],
+                        backgroundColor: [
+                            `${chartColors.primary}99`,
+                            `${chartColors.secondary}99`,
+                            `${chartColors.accent}99`,
+                            `${chartColors.success}99`,
+                            `${chartColors.info}99`
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'Attendance Distribution (%)' }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            document.querySelectorAll(".semester-btn").forEach(button => {
                 button.addEventListener("click", function() {
                     const semester = this.getAttribute("data-semester");
                     const data = semesterData[semester];
-                    
-                    // Update marks chart
+
                     marksChart.data.labels = data.labels;
-                    marksChart.data.datasets = [{
-                        label: `Semester ${semester} Marks`,
-                        data: data.marks,
-                        backgroundColor: [
-                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-                            '#9966FF', '#FF9F40', '#4D5360', '#00A86B',
-                            '#F7464A', '#46BFBD', '#FDB45C', '#949FB1'
-                        ].slice(0, data.marks.length)
-                    }];
+                    marksChart.data.datasets[0].data = data.marks;
+                    marksChart.data.datasets[0].label = `Semester ${semester} Marks`;
                     marksChart.update();
-                    
-                    // Highlight current semester in SGPA chart
-                    sgpaChart.data.datasets[0].pointBackgroundColor = sgpaData.labels.map((_, i) => 
-                        (i+1 == semester) ? '#FF0000' : '#007bff'
-                    );
-                    sgpaChart.update();
+
+                    document.querySelectorAll(".semester-btn").forEach(btn => {
+                        btn.classList.remove("active");
+                    });
+                    this.classList.add("active");
                 });
             });
+
+            document.querySelector('[data-semester="7"]').classList.add("active");
         });
     </script>
 </body>
